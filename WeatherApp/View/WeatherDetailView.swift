@@ -64,8 +64,8 @@ struct WeatherDetailView: View {
                 .cornerRadius(12)
                 .shadow(radius: 10)
                 .padding()
-            } else if let error = viewModel.errorMessage {
-                Text("Error: \(error)")
+            } else if viewModel.errorMessage != nil {
+                Text("Please go back to Weather Search and input a valid city name")
                     .foregroundColor(.red)
                     .font(.headline)
                     .padding()
