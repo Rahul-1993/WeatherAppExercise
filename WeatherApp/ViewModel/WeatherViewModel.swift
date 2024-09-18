@@ -9,16 +9,24 @@ import Foundation
 import Combine
 
 class WeatherViewModel: ObservableObject {
+    // MARK: - Published Properties
     @Published var weather: Weather?
     @Published var errorMessage: String?
     
+    // MARK: - Private Properties
     private var cancellables = Set<AnyCancellable>()
     private var weatherService: WeatherService
     private var city: String?
     private var latitude: Double?
     private var longitude: Double?
 
-    // Refactored initializer to handle both city and coordinates
+    // MARK: - Initializer
+    /// Initializer for the `WeatherViewModel`.
+    /// - Parameters:
+    ///   - weatherService: A service implementing `WeatherService` to fetch weather data. Defaults to `OpenWeatherService`.
+    ///   - city: Optional city name for weather search.
+    ///   - latitude: Optional latitude for weather search by coordinates.
+    ///   - longitude: Optional longitude for weather search by coordinates.
     init(weatherService: WeatherService = OpenWeatherService(), city: String? = nil, latitude: Double? = nil, longitude: Double? = nil) {
         self.weatherService = weatherService
         self.city = city
@@ -27,7 +35,8 @@ class WeatherViewModel: ObservableObject {
         fetchWeather()
     }
     
-    // Refactored fetch logic to handle both city and coordinates
+    // MARK: - Weather Fetching Logic
+    /// Determines the appropriate method to fetch the weather based on provided inputs (city or coordinates).
     private func fetchWeather() {
         if let city = city {
             handleWeatherPublisher(weatherService.fetchWeatherByCity(for: city))
@@ -38,7 +47,9 @@ class WeatherViewModel: ObservableObject {
         }
     }
     
-    // Reusable method to handle publishers
+    // MARK: - Publisher Handling
+       /// Generic method to handle a weather publisher, decoupling the publisher from the UI logic.
+       /// - Parameter publisher: A publisher of weather data that emits values or errors.
     private func handleWeatherPublisher(_ publisher: AnyPublisher<Weather, Error>) {
         publisher
             .sink(receiveCompletion: { completion in
