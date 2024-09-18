@@ -51,18 +51,18 @@ struct SearchView: View {
             }
             .padding(.bottom, 10)
 
-            Button(action: {
-                locationManager.requestLocation()
-            }) {
-                Text("Use Current Location")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .font(.headline)
-            }
-            .padding(.bottom, 10)
+//            Button(action: {
+//                locationManager.requestLocation()
+//            }) {
+//                Text("Use Current Location")
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.green)
+//                    .foregroundColor(.white)
+//                    .cornerRadius(8)
+//                    .font(.headline)
+//            }
+//            .padding(.bottom, 10)
 
             if let location = locationManager.location {
                 Button(action: {
@@ -78,7 +78,7 @@ struct SearchView: View {
                 }
                 .padding(.bottom, 10)
             } else if let locationError = locationManager.locationError {
-                Text("Error: \(locationError)")
+                Text("\(locationError) Please Enable Location Sharing from the Settings app")
                     .foregroundColor(.red)
                     .padding()
             }
