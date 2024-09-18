@@ -13,49 +13,72 @@ struct WeatherDetailView: View {
     
     private let imageCache = ImageCache() // Image cache instance
     
-    @State private var weatherIcon: UIImage? = nil
     @State private var isLoading = false
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 20) {
             // Back Button
             Button(action: {
                 coordinator.goToSearch() // Navigate back to SearchView
             }) {
                 HStack {
-                    Image(systemName: "chevron.left")
-                    Text("Back")
+                    Text("Back to Weather Search")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .font(.headline)
                 }
-                .padding()
-                .foregroundColor(.blue)
             }
+            .padding(.top, 20)
             
             // Weather Details
             if let weather = viewModel.weather {
-                VStack {
+                VStack(alignment: .center, spacing: 20) {
                     Text(weather.name)
                         .font(.largeTitle)
+                        .fontWeight(.bold)
                         .padding()
                     
                     // Fetch and display weather icon with caching
                     if let icon = weather.weather.first?.icon {
                         let iconUrl = "https://openweathermap.org/img/wn/\(icon)@2x.png"
-                        CachedImageView(imageUrl: iconUrl, cache: imageCache) // Use the custom image view with cache
-                            .frame(width: 100, height: 100)
+                        CachedImageView(imageUrl: iconUrl, cache: imageCache)
+                            .frame(width: 120, height: 120)
                             .padding()
                     }
                     
                     Text("Temperature: \(weather.main.temp, specifier: "%.1f")°C")
+                        .font(.title2)
+                    
                     Text("Humidity: \(weather.main.humidity)%")
+                        .font(.title3)
+                    
                     Text(weather.weather.first?.description.capitalized ?? "")
+                        .font(.body)
+                        .foregroundColor(.gray)
                 }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(radius: 10)
+                .padding()
             } else if let error = viewModel.errorMessage {
                 Text("Error: \(error)")
                     .foregroundColor(.red)
+                    .font(.headline)
+                    .padding()
             } else {
                 ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .scaleEffect(1.5, anchor: .center)
             }
         }
+        .padding()
+        .background(Color(white: 0.95))
+        .cornerRadius(12)
+        .shadow(radius: 10)
         .padding()
     }
 }
