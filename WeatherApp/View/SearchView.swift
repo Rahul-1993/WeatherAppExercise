@@ -21,7 +21,17 @@ struct SearchView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Weather Search")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.top)
+            
+            Text("Enter the name of the city to get the weather forecast or use your current location.")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .padding(.bottom, 10)
+
             TextField("Enter city", text: $city)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
@@ -32,43 +42,51 @@ struct SearchView: View {
                 coordinator.goToWeatherDetail(city: city)
             }) {
                 Text("Search")
+                    .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(8)
+                    .font(.headline)
             }
-            .padding()
+            .padding(.bottom, 10)
 
-            // Button to fetch location and display weather for current location
             Button(action: {
                 locationManager.requestLocation()
             }) {
                 Text("Use Current Location")
+                    .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(8)
+                    .font(.headline)
             }
-            .padding()
+            .padding(.bottom, 10)
 
             if let location = locationManager.location {
-                // When location is available, navigate to WeatherDetailView with coordinates
                 Button(action: {
                     coordinator.goToWeatherDetailByCoordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
                 }) {
                     Text("Show Weather for Current Location")
+                        .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(8)
+                        .font(.headline)
                 }
-                .padding()
+                .padding(.bottom, 10)
             } else if let locationError = locationManager.locationError {
                 Text("Error: \(locationError)")
                     .foregroundColor(.red)
                     .padding()
             }
         }
+        .padding()
+        .background(Color(white: 0.95))
+        .cornerRadius(12)
+        .shadow(radius: 10)
         .padding()
     }
 }
