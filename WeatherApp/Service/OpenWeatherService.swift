@@ -21,8 +21,6 @@ protocol WeatherService {
 
 /// Service responsible for fetching weather data from the OpenWeatherMap API.
 class OpenWeatherService: WeatherService {
-    private let apiKey = "d13f9c37068dc04df45dc55c2d5e17ff"
-    private let units = "metric"
     
     // MARK: - Fetch Weather Data (Generic)
     
@@ -47,7 +45,7 @@ class OpenWeatherService: WeatherService {
     /// - Parameter city: The name of the city for which weather data is requested.
     /// - Returns: A publisher that emits either `Weather` data or an `Error`.
         func fetchWeatherByCity(for city: String) -> AnyPublisher<Weather, Error> {
-            let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(apiKey)&units=\(units)"
+            let urlString = "\(baseUrl)\(version)\(endPoint)?q=\(city)&appid=\(apiKey)&units=\(units)"
             return fetchWeather(from: urlString)
         }
         
