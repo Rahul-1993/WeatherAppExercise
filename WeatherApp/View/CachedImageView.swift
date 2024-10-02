@@ -59,6 +59,5 @@ struct CachedImageView: View {
     let sampleImageUrl = "https://openweathermap.org/img/wn/04n@2x.png"
     
     CachedImageView(imageUrl: sampleImageUrl, cache: mockCache)
-        .previewLayout(.sizeThatFits)
         .padding()
 }
