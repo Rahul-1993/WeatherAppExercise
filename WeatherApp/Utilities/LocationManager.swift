@@ -18,44 +18,37 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
-        // Start by checking the authorization status
-        checkLocationAuthorization()
+        locationManager.requestWhenInUseAuthorization()
     }
     
     func requestLocation() {
-        // Ensure location services are enabled
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.requestLocation()
-        } else {
-            DispatchQueue.main.async {
-                self.locationError = "Location services are not enabled."
-            }
-        }
+        locationManager.requestLocation()
     }
     
+    // Delegate method called when authorization status changes
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        // Check authorization status when it changes
+        checkLocationAuthorization()
+    }
+
     // Check location authorization status
     private func checkLocationAuthorization() {
         switch locationManager.authorizationStatus {
         case .notDetermined:
-            locationManager.requestWhenInUseAuthorization() // This triggers the system prompt for permission
+            // Request authorization; no need to handle UI directly here
+            break
         case .restricted, .denied:
             DispatchQueue.main.async {
                 self.locationError = "Location access is restricted or denied."
             }
         case .authorizedWhenInUse, .authorizedAlways:
-            requestLocation() // Request location only when authorized
+            // Only request location when authorized
+            requestLocation()
         @unknown default:
             DispatchQueue.main.async {
                 self.locationError = "Unknown authorization status."
             }
         }
-    }
-    
-    // Delegate method called when authorization status changes
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        // Re-check authorization and request location if needed
-        checkLocationAuthorization()
     }
     
     // Delegate method called when location updates are received
