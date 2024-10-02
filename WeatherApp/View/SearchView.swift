@@ -29,7 +29,7 @@ struct SearchView: View {
                 .fontWeight(.bold)
                 .padding(.top)
             
-            Text("Enter the name of the city to get the weather forecast or use your current location.")
+            Text("Enter the name of the city to get the weather forecast or click on the button below in Yellow to show weather for your current location.")
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .padding(.bottom, 10)
