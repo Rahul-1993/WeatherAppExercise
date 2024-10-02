@@ -9,11 +9,14 @@ import SwiftUI
 
 struct WeatherDetailView: View {
     @ObservedObject var viewModel: WeatherViewModel
-    var coordinator: AppCoordinator // Coordinator reference to manage navigation
+    @ObservedObject var coordinator: AppCoordinator
     
     private let imageCache = ImageCache() // Image cache instance
     
-    @State private var isLoading = false
+    init(viewModel: WeatherViewModel, coordinator: AppCoordinator) {
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _coordinator = ObservedObject(wrappedValue: coordinator)
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
@@ -83,14 +86,10 @@ struct WeatherDetailView: View {
     }
 }
 
-
-struct WeatherDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Provide a valid city name when creating WeatherViewModel
-        let mockViewModel = WeatherViewModel(city: "San Francisco")
-        let mockCoordinator = AppCoordinator() // Create a dummy coordinator
+#Preview {
+    let mockViewModel = WeatherViewModel(city: "San Francisco")
+//        let mockViewModel = WeatherViewModel(latitude: 35.6586, longitude: 139.7454)
+    let mockCoordinator = AppCoordinator()
         
-        return WeatherDetailView(viewModel: mockViewModel, coordinator: mockCoordinator)
-    }
+    return WeatherDetailView(viewModel: mockViewModel, coordinator: mockCoordinator)
 }
-

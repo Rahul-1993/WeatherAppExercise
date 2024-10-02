@@ -13,9 +13,11 @@ struct SearchView: View {
     @State private var city: String = ""
 
     private let lastCityManager = LastCityManager() // Instance of LastCityManager
+    private let weatherService: WeatherService
 
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AppCoordinator, weatherService: WeatherService) {
         _coordinator = ObservedObject(wrappedValue: coordinator)
+        self.weatherService = weatherService
         // Load the last city name using LastCityManager
         _city = State(initialValue: LastCityManager().load() ?? "")
     }
@@ -39,7 +41,7 @@ struct SearchView: View {
             Button(action: {
                 // Save the city name using LastCityManager
                 lastCityManager.save(city: city)
-                coordinator.goToWeatherDetail(city: city)
+                coordinator.goToWeatherDetail(city: city, weatherService: weatherService)
             }) {
                 Text("Search")
                     .frame(maxWidth: .infinity)
@@ -92,9 +94,7 @@ struct SearchView: View {
 }
 
 
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView(coordinator: AppCoordinator()) // Use valid AppCoordinator
-    }
+#Preview {
+    SearchView(coordinator: AppCoordinator(), weatherService: OpenWeatherService())
 }
 
