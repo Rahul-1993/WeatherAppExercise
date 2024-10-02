@@ -20,15 +20,15 @@ class AppCoordinator: ObservableObject {
     
     private func setupInitialView() {
         // Now that all properties are initialized, safely use `self`
-        self.currentView = AnyView(SearchView(coordinator: self))
+        self.currentView = AnyView(SearchView(coordinator: self, weatherService: OpenWeatherService()))
     }
     
     func goToSearch() {
         // Update `currentView` to `SearchView`
-        self.currentView = AnyView(SearchView(coordinator: self))
+        self.currentView = AnyView(SearchView(coordinator: self, weatherService: OpenWeatherService()))
     }
     
-    func goToWeatherDetail(city: String) {
+    func goToWeatherDetail(city: String, weatherService: WeatherService) {
         // Create a `WeatherViewModel` instance
         let weatherViewModel = WeatherViewModel(city: city)
         
