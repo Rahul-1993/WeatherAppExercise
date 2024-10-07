@@ -38,8 +38,10 @@ struct WeatherDetailView: View {
     }
 }
 
+// MARK: - Extensions for View Sections
 extension WeatherDetailView {
-    var backButtonSection: some View {
+    // Button (Back button)
+    private var backButtonSection: some View {
         Button(action: {
             coordinator.goToSearch() // Navigate back to SearchView
         }) {
@@ -55,10 +57,9 @@ extension WeatherDetailView {
         }
         .padding(.top, 20)
     }
-}
-
-extension WeatherDetailView {
-    func weatherDetailsSection(weather: Weather) -> some View {
+    
+    // Details Section (Details)
+    private func weatherDetailsSection(weather: Weather) -> some View {
         VStack(alignment: .center, spacing: 20) {
             Text(weather.name)
                 .font(.largeTitle)
@@ -89,19 +90,17 @@ extension WeatherDetailView {
         .shadow(radius: 10)
         .padding()
     }
-}
-
-extension WeatherDetailView {
-    var errorMessageSection: some View {
+    
+    // Error Section (Error)
+    private var errorMessageSection: some View {
         Text("Please go back to Weather Search and input a valid city name")
             .foregroundColor(.red)
             .font(.headline)
             .padding()
     }
-}
-
-extension WeatherDetailView {
-    var loadingIndicatorSection: some View {
+    
+    // Indicator Section (Indicator)
+    private var loadingIndicatorSection: some View {
         ProgressView()
             .progressViewStyle(CircularProgressViewStyle())
             .scaleEffect(1.5, anchor: .center)
