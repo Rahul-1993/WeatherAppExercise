@@ -24,49 +24,68 @@ struct SearchView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Weather Search")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top)
-            
-            Text("Enter the name of the city to get the weather forecast or click on the button below in Yellow to show weather for your current location.")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .padding(.bottom, 10)
+            headerSection
+            descriptionSection
+            cityInputSection
+            searchButtonSection
+            currentLocationSection
+            locationErrorSection
+        }
+        .padding()
+        .background(Color(white: 0.95))
+        .cornerRadius(12)
+        .shadow(radius: 10)
+        .padding()
+    }
+}
 
-            TextField("Enter city", text: $city)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+// MARK: - Extensions for View Sections
+extension SearchView {
+    // Header Section (Title)
+    private var headerSection: some View {
+        Text("Weather Search")
+            .font(.largeTitle)
+            .fontWeight(.bold)
+            .padding(.top)
+    }
 
-            Button(action: {
-                // Save the city name using LastCityManager
-                lastCityManager.save(city: city)
-                coordinator.goToWeatherDetail(city: city, weatherService: weatherService)
-            }) {
-                Text("Search")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .font(.headline)
-            }
+    // Description Section (Subtitle text)
+    private var descriptionSection: some View {
+        Text("Enter the name of the city to get the weather forecast or click on the button below in Yellow to show weather for your current location.")
+            .font(.subheadline)
+            .foregroundColor(.gray)
             .padding(.bottom, 10)
+    }
 
-//            Button(action: {
-//                locationManager.requestLocation()
-//            }) {
-//                Text("Use Current Location")
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.green)
-//                    .foregroundColor(.white)
-//                    .cornerRadius(8)
-//                    .font(.headline)
-//            }
-//            .padding(.bottom, 10)
+    // City Input Section (TextField)
+    private var cityInputSection: some View {
+        TextField("Enter city", text: $city)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding()
+    }
 
-            if let location = locationManager.location {
+    // Search Button Section
+    private var searchButtonSection: some View {
+        Button(action: {
+            // Save the city name using LastCityManager
+            lastCityManager.save(city: city)
+            coordinator.goToWeatherDetail(city: city, weatherService: weatherService)
+        }) {
+            Text("Search")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                .font(.headline)
+        }
+        .padding(.bottom, 10)
+    }
+
+    // Current Location Button Section
+    private var currentLocationSection: some View {
+        if let location = locationManager.location {
+            return AnyView(
                 Button(action: {
                     coordinator.goToWeatherDetailByCoordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
                 }) {
@@ -79,17 +98,21 @@ struct SearchView: View {
                         .font(.headline)
                 }
                 .padding(.bottom, 10)
-            } else if let locationError = locationManager.locationError {
+            )
+        }
+        return AnyView(EmptyView())
+    }
+
+    // Location Error Section
+    private var locationErrorSection: some View {
+        if let locationError = locationManager.locationError {
+            return AnyView(
                 Text("\(locationError) Please Enable Location Sharing from the Settings app")
                     .foregroundColor(.red)
                     .padding()
-            }
+            )
         }
-        .padding()
-        .background(Color(white: 0.95))
-        .cornerRadius(12)
-        .shadow(radius: 10)
-        .padding()
+        return AnyView(EmptyView())
     }
 }
 
