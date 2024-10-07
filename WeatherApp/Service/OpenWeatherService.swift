@@ -13,8 +13,8 @@ import Combine
 /// Protocol that defines the contract for weather services.
 /// This allows for dependency injection and easier testing by conforming to different implementations.
 protocol WeatherService {
-    func fetchWeatherByCity(for city: String) -> AnyPublisher<Weather, Error>
-    func fetchWeatherByCoordinates(latitude: Double, longitude: Double) -> AnyPublisher<Weather, Error>
+    func fetchWeatherByCity(for city: String) -> AnyPublisher<Weather, WeatherError>
+    func fetchWeatherByCoordinates(latitude: Double, longitude: Double) -> AnyPublisher<Weather, WeatherError>
 }
 
 // MARK: - OpenWeatherService Implementation
@@ -27,14 +27,15 @@ class OpenWeatherService: WeatherService {
     /// Generic method for fetching weather data from a given URL.
     /// - Parameter urlString: The URL string used to make the network request.
     /// - Returns: A publisher that emits either `Weather` data or an `Error`.
-        private func fetchWeather(from urlString: String) -> AnyPublisher<Weather, Error> {
+        private func fetchWeather(from urlString: String) -> AnyPublisher<Weather, WeatherError> {
             guard let url = URL(string: urlString) else {
-                return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+                return Fail(error: .invalidURL).eraseToAnyPublisher()
             }
             
             return URLSession.shared.dataTaskPublisher(for: url)
                 .map(\.data)
                 .decode(type: Weather.self, decoder: JSONDecoder())
+                .mapError { WeatherError.decodingError($0 as! DecodingError) }
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
         }
@@ -44,7 +45,7 @@ class OpenWeatherService: WeatherService {
     /// Fetch weather data for a specific city.
     /// - Parameter city: The name of the city for which weather data is requested.
     /// - Returns: A publisher that emits either `Weather` data or an `Error`.
-        func fetchWeatherByCity(for city: String) -> AnyPublisher<Weather, Error> {
+    func fetchWeatherByCity(for city: String) -> AnyPublisher<Weather, WeatherError> {
             let urlString = "\(baseUrl)\(version)\(endPoint)?q=\(city)&appid=\(apiKey)&units=\(units)"
             return fetchWeather(from: urlString)
         }
@@ -56,7 +57,7 @@ class OpenWeatherService: WeatherService {
     ///   - latitude: The latitude of the desired location.
     ///   - longitude: The longitude of the desired location.
     /// - Returns: A publisher that emits either `Weather` data or an `Error`.
-        func fetchWeatherByCoordinates(latitude: Double, longitude: Double) -> AnyPublisher<Weather, Error> {
+    func fetchWeatherByCoordinates(latitude: Double, longitude: Double) -> AnyPublisher<Weather, WeatherError> {
             let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)&units=\(units)"
             return fetchWeather(from: urlString)
         }

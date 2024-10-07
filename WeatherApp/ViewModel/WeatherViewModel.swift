@@ -11,7 +11,7 @@ import Combine
 class WeatherViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var weather: Weather?
-    @Published var errorMessage: String?
+    @Published var errorMessage: WeatherError?
     
     // MARK: - Private Properties
     private var cancellables = Set<AnyCancellable>()
@@ -43,18 +43,18 @@ class WeatherViewModel: ObservableObject {
         } else if let latitude = latitude, let longitude = longitude {
             handleWeatherPublisher(weatherService.fetchWeatherByCoordinates(latitude: latitude, longitude: longitude))
         } else {
-            self.errorMessage = "Invalid parameters provided."
+            self.errorMessage = .invalidURL
         }
     }
     
     // MARK: - Publisher Handling
        /// Generic method to handle a weather publisher, decoupling the publisher from the UI logic.
        /// - Parameter publisher: A publisher of weather data that emits values or errors.
-    private func handleWeatherPublisher(_ publisher: AnyPublisher<Weather, Error>) {
+    private func handleWeatherPublisher(_ publisher: AnyPublisher<Weather, WeatherError>) {
         publisher
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = error
                 }
             }, receiveValue: { weather in
                 self.weather = weather

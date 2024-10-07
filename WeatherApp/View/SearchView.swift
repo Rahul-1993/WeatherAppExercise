@@ -9,14 +9,17 @@ import SwiftUI
 
 struct SearchView: View {
     @ObservedObject var coordinator: AppCoordinator
+    @ObservedObject var viewModel: WeatherViewModel
     @StateObject private var locationManager = LocationManager() // Location Manager
+    
     @State private var city: String = ""
 
     private let lastCityManager = LastCityManager() // Instance of LastCityManager
     private let weatherService: WeatherService
 
-    init(coordinator: AppCoordinator, weatherService: WeatherService) {
+    init(coordinator: AppCoordinator, weatherService: WeatherService, viewModel: WeatherViewModel) {
         _coordinator = ObservedObject(wrappedValue: coordinator)
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         self.weatherService = weatherService
         // Load the last city name using LastCityManager
         _city = State(initialValue: LastCityManager().load() ?? "")
@@ -95,6 +98,6 @@ struct SearchView: View {
 
 
 #Preview {
-    SearchView(coordinator: AppCoordinator(), weatherService: OpenWeatherService())
+    SearchView(coordinator: AppCoordinator(), weatherService: OpenWeatherService(), viewModel: WeatherViewModel())
 }
 
